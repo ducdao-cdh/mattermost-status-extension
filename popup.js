@@ -2,11 +2,24 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('scanButton').addEventListener('click', scanMattermost);
     document.getElementById('autoStatusSwitch').addEventListener('change', toggleAutoStatus);
 
+    document.querySelectorAll('input[name="status"]').forEach((radio) => {
+        radio.addEventListener('change', toggleSetStatus)
+    });
+
     // Restore switch state
     chrome.storage.local.get(["autoStatusEnabled"], (data) => {
         if (data.autoStatusEnabled) {
             document.getElementById('autoStatusSwitch').checked = true;
             updateStatus();
+        }
+    });
+
+    chrome.storage.local.get(["statusSet"], (data) => {
+        if (data.statusSet) {
+            const radioToCheck = document.querySelector(`input[name="status"][value="${data.statusSet}"]`)
+            if (radioToCheck) {
+                radioToCheck.checked = true
+            }
         }
     });
 
@@ -57,9 +70,8 @@ async function scanMattermost() {
 function toggleAutoStatus(event) {
     const isChecked = event.target.checked;
     const toggledAt = Math.round(new Date().getTime() / 1000);
+
     chrome.storage.local.set({ autoStatusEnabled: isChecked });
-
-
 
     if (isChecked) {
         chrome.alarms.create("checkStatus", { periodInMinutes: 1 });
@@ -68,12 +80,20 @@ function toggleAutoStatus(event) {
         chrome.alarms.clear("checkStatus");
     }
 }
+function toggleSetStatus(event) {
+    chrome.storage.local.set({ statusSet: event.target.value })
+    updateStatus()
+}
+
 
 
 function updateStatus() {
     chrome.storage.local.get(["mattermostDomain", "xRequestId", "userId", "csrfToken"], (data) => {
         console.log("Running updateStatus with data:", data);
         if (data.mattermostDomain && data.xRequestId && data.userId && data.csrfToken) {
+
+            let status = document.querySelector('input[name="status"]:checked').value
+
             fetch(`https://${data.mattermostDomain}/api/v4/users/${data.userId}/status`, {
                 method: "PUT",
                 headers: {
@@ -84,7 +104,7 @@ function updateStatus() {
                 },
                 body: JSON.stringify({
                     "user_id": data.userId,
-                    "status": "online"
+                    status
                 }),
                 credentials: 'include'
             })
@@ -92,7 +112,7 @@ function updateStatus() {
                 if (!response.ok) {
                     console.error("Error updating status:", response.statusText);
                 } else {
-                    console.log("Status successfully updated to 'online'");
+                    console.log(`Status successfully updated to '${status}'`);
                 }
             })
             .catch(error => {

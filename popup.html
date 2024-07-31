@@ -1,16 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Mattermost Persistent Online Status</title>
+  <title>Mattermost Persistent Status</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h2>Mattermost Persistent Online Status</h2>
-  <span>Toggle Online Status</span><br>
+  <h2>Mattermost Persistent Status</h2>
   <label class="switch">
     <input type="checkbox" id="autoStatusSwitch">
     <span class="slider round"></span>
   </label>
+  <label class="radio">
+    <input type="radio" id="status_online" name="status" value="online" checked>
+    <label for="status_online">Online</label>
+    <input type="radio" id="status_away" name="status" value="away">
+    <label for="status_away">Away</label>
+    <input type="radio" id="status_dnd" name="status" value="dnd">
+    <label for="status_dnd">Do not disturb</label>
+    <input type="radio" id="status_offline" name="status" value="offline">
+    <label for="status_offline">Offline</label>
+  </label>
+  
+
   <button id="scanButton">Scan first</button>
   <button id="viewDataButton">View Stored Data</button>
   <div id="scanResult" style="display: none;"></div>

@@ -1,11 +1,9 @@
 /*
 PERSISTENT MATTERMOST ONLINE STATUS
-
-CREATED BY @Nightyonlyy
 */
 
 // Check every 2 minutes [DEFAULT MATTERMOST INACTIVITY TIMEOUT IS 5 min]
-const CHECK_INTERVAL_MINUTES = 2;
+const CHECK_INTERVAL_MINUTES = 1;
 
 // Helper function to get cookies and save to local storage
 const saveCookiesToLocalStorage = (cookies) => {
@@ -93,10 +91,15 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
             };
 
             const statusUrl = `https://${mattermostDomain}/api/v4/users/${userId}/status`;
-            const status = await fetchStatus(statusUrl, headers);
-            if (status === "away") {
-                await updateStatus(statusUrl, headers, { "user_id": userId, "status": "online" });
-            }
+            // const status = await fetchStatus(statusUrl, headers);
+
+            chrome.storage.local.get(["statusSet"], async (data) => {
+                if (data.statusSet) {
+                    await updateStatus(statusUrl, headers, { "user_id": userId, status: data.statusSet })
+                }
+            })
+
+
         } else {
             console.error('Missing data on alarm:', { mattermostDomain, xRequestId, userId, csrfToken });
         }

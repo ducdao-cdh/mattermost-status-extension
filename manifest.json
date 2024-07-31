@@ -4,7 +4,9 @@
     "version": "1.0.0",
     "action": {
         "default_icon": {
-            "128": "icons/favicon.png"
+            "128": "icons/mattermost.png",
+            "16": "icons/favicon-16x16.png",
+            "32": "icons/favicon-32x32.png"
           },
         "default_popup": "popup.html",
         "default_title": "Seamless Mattermost Online Status"

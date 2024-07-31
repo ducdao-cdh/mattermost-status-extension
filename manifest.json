@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "Mattermost Online Status",
+    "name": "Mattermost Status",
     "version": "1.0.0",
     "action": {
         "default_icon": {
@@ -9,7 +9,7 @@
             "32": "icons/favicon-32x32.png"
           },
         "default_popup": "popup.html",
-        "default_title": "Seamless Mattermost Online Status"
+        "default_title": "Seamless Mattermost Status"
     },
     "permissions": [
         "activeTab",
